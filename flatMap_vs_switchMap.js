@@ -7,7 +7,7 @@ require('rxjs/add/operator/map');
 
 let outer = Observable.interval(1000).take(2);
 
-let combined = outer.flatMap((x,y) => {
+let combined = outer.flatMap((x) => {
     return Observable
         .interval(400)
         .take(3)

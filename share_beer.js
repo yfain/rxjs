@@ -1,6 +1,10 @@
+let {Observable} = require('rxjs/Observable');
+require('rxjs/add/operator/share');
+require('rxjs/add/operator/map');
+
 function getData(){
 
-    return Rx.Observable.create( observer => {
+    return Observable.create( observer => {
         let beers = [
             {name: "Stella", country: "Belgium", price: 9.50},
             {name: "Sam Adams", country: "USA", price: 8.50},
@@ -20,7 +24,7 @@ function getData(){
 
             if (!beers.length) {
                 observer.complete();
-                window.clearTimeout(timeout);
+                clearTimeout(timeout);
             }
         }
     });
@@ -30,15 +34,16 @@ const beerObservable  = getData()
     .map(beer => beer.name + ", " + beer.country)
     .share();         // make it hot
 
-function subscribeToBeers() {
+function subscribeToBeers(name) {
     beerObservable
         .subscribe(
-            beer => console.log("Got " + beer),
-            err => console.error(err),
-            () => console.log("The stream is over")
+            beer => console.log(` ${name} got ${beer}`)
         );
 }
 
-subscribeToBeers();   // First subscriber
+subscribeToBeers('Subscriber 1');   // Starting first subscription
 
-setTimeout(subscribeToBeers, 3000); // Second subscriber joins in 3 sec
+let secondSubscriber = () =>  subscribeToBeers('Subscriber 2');
+
+setTimeout(secondSubscriber, 4000); // Second subscriber joins in 4 sec
+
